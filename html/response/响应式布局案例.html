@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        img {
+            width: 100%;
+            height: 100%;
+        }
+        .top .right{
+            display: flex;
+            justify-content: space-between;
+        }
+        .top .right > div{
+            width: 49%;
+        }
+        @media screen and (min-width: 768px) {
+            .top .left{
+                width: 49.5%;
+            }
+            .top .right{
+                width: 49.5%;
+            }
+
+        }
+        @media screen and (max-width: 768px) {
+            .top .left{
+                width: 100%;
+            }
+            .top .right{
+                width: 100%;
+            }
+
+        }
+        .bottom{
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .bottom  img{
+            width: 100%;
+            height: 100%;
+        }
+        .bottom > div{
+            width: 23%;
+            padding: 5px;
+            border: 1px solid green;
+        }
+        @media screen and (min-width: 1024px) {
+            .bottom > div {
+                width: 24%;
+            }
+            .bottom  img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        @media screen and (max-width: 1024px) and (min-width: 768px) {
+            .bottom > div {
+                width: 31%;
+            }
+            .bottom  img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        @media screen and (max-width: 768px) and (min-width: 450px) {
+            .bottom > div {
+                width: 48%;
+            }
+            .bottom  img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+        @media screen and (max-width: 450px){
+            .bottom > div {
+                width: 99%;
+            }
+            .bottom  img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!-- top  flex wrap
+       > 768px  左 49% 右49%
+       < 768px  上 100% 下100%
+     bottom: flex wrap
+        width > 1024      24% * 4
+        768 < width < 1024   31* 3
+        450 < width < 768   48*2
+        <450               90*1
+  -->
+    <div class="top">
+        <div class="left">
+            <div>
+                <img src="images/1.png" alt="">
+            </div>
+        </div>
+        <div class="right">
+            <div>
+                <img src="images/2.png" alt="">
+            </div>
+            <div>
+                <img src="images/3.png" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div>
+            <img src="images/3.png" alt="">
+            <p></p>
+        </div>
+        <div>
+            <img src="images/4.png" alt="">
+            <p></p>
+        </div>
+        <div>
+            <img src="images/5.png" alt="">
+            <p></p>
+        </div>
+        <div>
+            <img src="images/6.png" alt="">
+            <p></p>
+        </div>
+<!--        <div>-->
+<!--            <img src="images/7.png" alt="">-->
+<!--            <p></p>-->
+<!--        </div>-->
+    </div>
+
+</body>
+</html>

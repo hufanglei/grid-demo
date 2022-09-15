@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <title>横竖屏检测</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        /*!*pc端或大屏幕设备: 1028px至更大*!*/
+        /*@media screen and (min-width: 1029px) {*/
+        /*    body {*/
+        /*        background: red;*/
+        /*    }*/
+        /*}*/
+        /*!*竖屏*!*/
+        /*@media screen and (orientation: portrait) and (max-width: 720px) {*/
+        /*    body {*/
+        /*        background: green;*/
+        /*    }*/
+        /*}*/
+        /*!*横屏*!*/
+        /*@media screen and (orientation: landscape) {*/
+        /*    body {*/
+        /*        background: indigo;*/
+        /*    }*/
+        /*}*/
+        body{
+            display: flex;
+            flex-wrap: wrap;
+        }
+        div{
+            height: 100px;
+            background: yellow;
+            border: 2px solid red;
+            box-sizing: border-box;
+            width: 25%;
+        }
+        @media screen and (orientation: portrait) {
+            div{
+                width: 33.3333%;
+            }
+        }
+        @media screen and (orientation: landscape) {
+            div{
+                width: 25%;
+            }
+        }
+    </style>
+</head>
+<body>
+   <div></div>
+   <div></div>
+   <div></div>
+   <div></div>
+   <div></div>
+   <div></div>
+</body>
+</html>
