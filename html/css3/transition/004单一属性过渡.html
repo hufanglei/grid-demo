@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>单一属性过渡</title>
+    <style>
+       div{
+         width: 200px;
+         height: 200px;
+         background: yellow;
+         transition-property: height background;
+         transition-duration: 1.5s;
+         transition-timing-function: linear;
+       }
+       div:hover{
+           height: 600px;
+           background: red;
+       }
+    </style>
+</head>
+<body>
+  <div></div>
+</body>
+</html>

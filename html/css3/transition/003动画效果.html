@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        ul {
+            list-style: none;
+        }
+        li {
+            width: 200px;
+            height: 50px;
+            border: 1px solid grey;
+        }
+        ul:hover li:nth-child(1) {
+            width: 600px;
+            transition: all 2s linear;
+        }
+        ul:hover li:nth-child(2) {
+            width: 600px;
+            transition: all 2s ease;
+        }
+        ul:hover li:nth-child(3) {
+            width: 600px;
+            transition: all 2s ease-in;
+        }
+        ul:hover li:nth-child(4) {
+            width: 600px;
+            transition: all 2s ease-out;
+        }
+        ul:hover li:nth-child(5) {
+            width: 600px;
+            transition: all 2s ease-in-out;
+        }
+        ul:hover li:nth-child(6) {
+            width: 600px;
+            transition: all 2s  cubic-bezier(.19,1.03,.95,.39);
+        }
+    </style>
+</head>
+<body>
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+</body>
+</html>
