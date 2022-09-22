@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>practice9-DrawImage</title>
+  <style type="text/css">
+    *{
+      padding:0;
+      margin: 0;
+    }
+    body{
+      text-align: center;
+      padding-top: 20px;
+    }
+    canvas{
+      box-shadow: 0 0 10px #333333;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body onload="draw()">
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<!--用法二：定图像的宽度和高度，将图像放大或者缩小-->
+<!--context.drawImage(img,x,y,width,height);-->
+
+<script>
+  function draw(){
+    var ctx = document.getElementById('canvas');
+
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+
+      //定义图片
+      var img = new Image();
+      img.src = '../images/2.png';
+
+      //确保图片被加载完成
+      img.onload = function() {
+        //使用drawImage绘制到画布上面
+        ctx.drawImage(this,50,50,300,300);
+      }
+    }else{
+      alert('请更新浏览器！！！');
+    }
+  }
+</script>
+</body>
+</html>
+

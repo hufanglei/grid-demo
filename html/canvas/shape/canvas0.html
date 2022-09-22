@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制图形</title>
+</head>
+<body >
+<canvas id="myCanvas" width="150" height="150"></canvas>
+<canvas id="myCanvas2" width="150" height="150"></canvas>
+<canvas id="myCanvas3" width="150" height="150"></canvas>
+</body>
+<!--路径-->
+<!--以下方法和属性用来绘制路径。-->
+
+<!--CanvasRenderingContext2D.beginPath()：开始绘制路径。-->
+<!--CanvasRenderingContext2D.closePath()：结束路径，返回到当前路径的起始点，会从当前点到起始点绘制一条直线。如果图形已经封闭，或者只有一个点，那么此方法不会产生任何效果。-->
+<!--CanvasRenderingContext2D.moveTo()：设置路径的起点，即将一个新路径的起始点移动到(x，y)坐标。-->
+<!--CanvasRenderingContext2D.lineTo()：使用直线从当前点连接到(x, y)坐标。-->
+<!--CanvasRenderingContext2D.fill()：在路径内部填充颜色（默认为黑色）。-->
+<!--CanvasRenderingContext2D.stroke()：路径线条着色（默认为黑色）。-->
+<!--CanvasRenderingContext2D.fillStyle：指定路径填充的颜色和样式（默认为黑色）。-->
+<!--CanvasRenderingContext2D.strokeStyle：指定路径线条的颜色和样式（默认为黑色）。-->
+
+
+
+<script>
+    // var canvas = document.getElementById('canvas');
+    // var ctx = canvas.getContext('2d');
+    // ctx.fillStyle = 'green';
+    // ctx.fillRect(10, 10, 100, 100);
+
+    // var canvas = document.getElementById('myCanvas');
+    // var ctx = canvas.getContext('2d');
+    // ctx.rect(10, 10, 100, 100);
+    // ctx.stokef();
+
+    //用来绘制一个矩形区域的边框。
+    // var canvas = document.getElementById('myCanvas');
+    // var ctx = canvas.getContext('2d');
+    // ctx.strokeStyle = 'red';
+    // //左上角坐标为(10, 10)，宽和高都为100。
+    // ctx.strokeRect(10, 10, 100, 100);
+
+    //弧线
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    //ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
+    ctx.arc(60, 60, 50, 0, Math.PI * 2, true);
+    ctx.stroke();
+
+    //绘制空心半圆的例子
+    var canvas = document.getElementById('myCanvas2');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    //CanvasRenderingContext2D.moveTo()：设置路径的起点，即将一个新路径的起始点移动到(x，y)坐标。
+    ctx.moveTo(50, 20);
+    ctx.arc(100, 20, 50, 0, Math.PI, false);
+    ctx.stroke();
+
+    var canvas = document.getElementById('myCanvas3');
+    var ctx = canvas.getContext('2d');
+    //CanvasRenderingContext2D.fillText(text, x, y [, maxWidth])
+    //CanvasRenderingContext2D.fillText()：在指定位置绘制实心字符。
+    // CanvasRenderingContext2D.strokeText()：在指定位置绘制空心字符。
+    ctx.fillText('Hello world', 50, 50);
+
+
+
+
+</script>
+</html>

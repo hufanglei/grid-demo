@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <style type="text/css">
+    body {
+      background: #eeeeee;
+    }
+    #controls {
+      position: absolute;
+      left: 25px;
+      top: 25px;
+    }
+    #canvas {
+      background: #ffffff;
+      cursor: pointer;
+      margin-left: 10px;
+      margin-top: 10px;
+      -webkit-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+      -moz-box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+      -box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    #copycanvas {
+      border: 1px solid #000;
+      display: none;
+    }
+    #square {
+      width: 90px;
+      height: 90px;
+      background-color: #cc3;
+      border: 1px solid #f00;
+      opacity: 0.5;
+      position: absolute;
+      z-index: 999;
+      display: none;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+
+<body>
+<div>
+  <canvas id="canvas" width="600" height="400"></canvas>
+  <canvas id="copycanvas" width="600" height="400"></canvas>
+  <div id="square"></div>
+  <img src="e.jpg" style="display: none" id="img">
+
+  <div>
+
+    <button id="mochu">开始移动</button>
+
+    <button id="mochus">画线</button>
+
+    <button id="big">放大</button>
+
+    <button id="magnification">2倍放大</button>
+
+
+  </div>
+
+  <div id="controls">
+    Stroke color:
+    <select id="strokeStyleSelect">
+      <option value="red">red</option>
+      <option value="green">green</option>
+      <option value="blue">blue</option>
+      <option value="orange">orange</option>
+    </select>
+
+    Guidewires:
+    <input type="checkbox" name="guidewireCheckbox" id="guidewireCheckbox" value="" checked="checked" />
+    <input type="button" name="eraseAllButton" id="eraseAllButton" value="Erase all" />
+    <p style="color: red;" id="message"></p>
+  </div>
+</div>
+
+</body>
+<script type="text/javascript">
+  var canvas = document.getElementById("canvas");
+  var context = canvas.getContext("2d");
+  var img = new Image();
+  img.src = "e.jpg";
+  context.drawImage(img, canvas.width, canvas.height);
+  var copycanvas = document.getElementById('copycanvas'),  //获取copycanvas
+          copycontext = copycanvas.getContext('2d'),
+          square = document.getElementById('square'),  //获取透明框
+          squaredata = {}, //用来保存选择框数据
+          box = canvas.getBoundingClientRect();
+  var btn = document.getElementById('mochu');
+  var btns = document.getElementById('mochus');
+  var big = document.getElementById("big");
+  var mag = document.getElementById("magnification");
+  // 图片被放大区域的中心点，也是放大镜的中心点
+  var centerPoint = {};
+  // 图片被放大区域的半径
+  var originalRadius = 50;
+  // 图片被放大区域
+  var originalRectangle = {};
+  centerPoint.x = 600;
+  centerPoint.y = 400;
+  // 放大倍数
+  var scale = 2;
+  // 放大后区域
+  var scaleGlassRectangle
+  img.onload = () => {
+    context.drawImage(img, 0, 0, 600, 400);
+  }
+  btn.onclick = function () {
+    context.save();
+    canvas.onmousemove = function (e) {
+      var x = e.offsetX;
+      var y = e.offsetY;
+      var peoWidth = img.width;
+      var peoHeight = img.height;
+      context.clearRect(0, 0, 600, 400);
+      context.drawImage(img, x - peoWidth / 2, y - peoHeight / 2)
+    }
+  }
+  btns.onclick = function () {
+    var eraseAllButton = document.getElementById("eraseAllButton");
+    var strokeStyleSelect = document.getElementById("strokeStyleSelect");
+    var guidewireCheckbox = document.getElementById("guidewireCheckbox");
+    var message = document.getElementById("message");
+    var drawingSurfacsImageData = null;
+    var mousedown = {};
+    var rubberbandRect = {};
+    var dragging = false;
+    var guidewires = guidewireCheckbox.checked;
+    var loc = null;
+    drawHorizontLine(0);
+    drawVerticalLine(0);
+
+    //获取实际的鼠标在canvas的位置
+    function windowToCanvas(x, y) {
+      var bbox = canvas.getBoundingClientRect();
+      return {
+        x: x - bbox.left * (canvas.width / bbox.width),
+        y: y - bbox.top * (canvas.height / bbox.width)
+      };
+    }
+    //保存当前的canvas上的数据
+    function saveDrawingSurface() {
+      drawingSurfacsImageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+    //恢复canvas的数据，主要用来显示最新的线段，擦除原来的线段
+    function restoreDrawingSurface() {
+      context.putImageData(drawingSurfacsImageData,
+              0, 0, 0, 0, canvas.width, canvas.height
+      );
+    }
+
+    //应该是计算需要偏移的量???不懂他要这个干嘛
+    function updateRubberbandRectangle(loc) {
+
+      rubberbandRect.width = Math.abs(loc.x - mousedown.x);
+      rubberbandRect.height = Math.abs(loc.y - mousedown.y);
+      if (loc.x > mousedown.x) {
+        rubberbandRect.left = mousedown.x;
+      } else {
+        rubberbandRect.left = loc.x;
+      }
+      if (loc.y > mousedown.y) {
+        rubberbandRect.top = mousedown.y;
+      } else {
+        rubberbandRect.top = loc.y;
+      }
+
+      message.innerHTML = "mousedown.x=" + mousedown.x + ",mousedown.y=" + mousedown.y + ",loc.x=" + loc.x + ",loc.y=" + loc.y;
+    }
+    //更新
+    function updateRubberband(loc) {
+      //此处在《HTML5 canvas核心技术——图形、动画与游戏开发》一书中
+      //updateRubberbandRectangle方法是没有注释的，但是我不懂要这个
+      //方法有什么作用，注释之后也不影响，话说我也不用话什么矩形哇
+      //有知道这个方法在这里是做什么的同学在下方评论一下告知哈
+      //updateRubberbandRectangle(loc);
+      drawRubberbandShape(loc);
+    }
+    //画最新的线条
+    function drawRubberbandShape(loc) {
+      context.beginPath();
+      context.moveTo(mousedown.x, mousedown.y);
+      context.lineTo(loc.x, loc.y);
+      context.stroke();
+    }
+    //画横线，在y坐标上
+    function drawHorizontLine(y) {
+      context.beginPath();
+      context.moveTo(0, y + 0.5);
+      context.lineTo(canvas.width, y + 0.5);
+      context.stroke();
+    }
+    //画竖线
+    function drawVerticalLine(x) {
+      context.beginPath();
+      context.moveTo(x + 0.5, 0);
+      context.lineTo(x + 0.5, canvas.height);
+      context.stroke();
+    }
+    function drawGuidewires(x, y) {
+      context.save();
+      context.strokeStyle = "rgba(0,0,230, 0.4)";
+      context.lineWidth = 0.5;
+      drawHorizontLine(y);
+      drawVerticalLine(x);
+      context.restore();
+    }
+    canvas.onmousedown = function (e) {
+      loc = windowToCanvas(e.clientX, e.clientY);
+
+      e.preventDefault();
+      saveDrawingSurface();
+      mousedown.x = loc.x;
+      mousedown.y = loc.y;
+      dragging = true;
+    };
+    canvas.onmousemove = function (e) {
+
+      //判断当前是否用户在拖动
+      if (dragging) {
+        e.preventDefault();
+        loc = windowToCanvas(e.clientX, e.clientY);
+
+        restoreDrawingSurface();
+        updateRubberband(loc);
+        if (guidewires) {
+          //如果选中的加入辅助线
+          //这里的辅助线应该只有在鼠标那个地方才出现的
+          drawGuidewires(loc.x, loc.y);
+        }
+      }
+    };
+    canvas.onmouseup = function (e) {
+      loc = windowToCanvas(e.clientX, e.clientY);
+      restoreDrawingSurface();
+      updateRubberband(loc);
+      //鼠标抬起，拖动标记设为否
+      dragging = false;
+    };
+    eraseAllButton.onclick = function (e) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      saveDrawingSurface();
+    };
+    strokeStyleSelect.onchange = function (e) {
+      context.strokeStyle = strokeStyleSelect.value;
+    };
+    guidewireCheckbox.onchange = function (e) {
+      guidewires = guidewireCheckbox.checked;
+    };
+    context.strokeStyle = strokeStyleSelect.value;
+
+  }
+  big.onclick = function () {
+    canvas.onmouseover = function (e) {
+      var x = e.clientX, //获取鼠标实时坐标
+              y = e.clientY;
+      createSquare(x, y); //保存透明选择框属性
+    };
+    window.onmousemove = function (e) {
+      var x = e.clientX,
+              y = e.clientY;
+      //判断鼠标是否移出canvas
+      if (x >= canvas.offsetLeft && x <= canvas.offsetLeft + canvas.width &&
+              y >= canvas.offsetTop && y <= canvas.offsetTop + canvas.height) {
+        createSquare(x, y);
+      } else {
+        hideSquare();
+        hideCanvas();
+      }
+    }
+    function showSquare() {
+      square.style.display = 'block';
+    }
+    function hideSquare() {
+      square.style.display = 'none';
+    }
+    function showCanvas() {
+      copycanvas.style.display = "inline";
+    }
+    function hideCanvas() {
+      copycanvas.style.display = "none";
+    }
+    function createSquare(x, y) {
+      //控制选择框不移动出canvas
+      x = x - 45 < canvas.offsetLeft ? canvas.offsetLeft : x - 45;
+      y = y - 45 < canvas.offsetTop ? canvas.offsetTop : y - 45;
+      x = x + 90 < box.right ? x : box.right - 90;
+      y = y + 90 < box.bottom ? y : box.bottom - 90;
+      squaredata.left = x;
+      squaredata.top = y;
+      moveSquare(x, y);
+    }
+    function moveSquare(x, y) {
+      square.style.left = x + "px";
+      square.style.top = y + "px";
+      showCanvas();
+      showSquare();
+      copy();
+    }
+    function copy() {
+      copycontext.drawImage(
+              canvas,
+              squaredata.left - box.left,
+              squaredata.top - box.top,
+              90,
+              90,
+              0,
+              0,
+              copycanvas.width,
+              copycanvas.height
+      );
+    }
+  }
+  mag.onclick = function () {
+    context.save();
+    addListener();
+    draw();
+    function drawBackGround() {
+      context.drawImage(img, 0, 0);
+    }
+    function calOriginalRectangle(point) {
+      originalRectangle.x = point.x - originalRadius;
+      originalRectangle.y = point.y - originalRadius;
+      originalRectangle.width = originalRadius;
+      originalRectangle.height = originalRadius;
+      // originalRectangle.width = originalRadius * 2;
+      // originalRectangle.height = originalRadius * 2;
+    }
+
+    function drawMagnifyingGlass() {
+
+      scaleGlassRectangle = {
+        x: centerPoint.x - originalRectangle.width * scale / 2,
+        y: centerPoint.y - originalRectangle.height * scale / 2,
+        x: centerPoint.x - originalRectangle.width * scale / 2,
+        y: centerPoint.y - originalRectangle.height * scale / 2,
+        width: originalRectangle.width * scale,
+        height: originalRectangle.height * scale
+
+      }
+      context.save();
+      context.beginPath();
+      context.arc(centerPoint.x, centerPoint.y, originalRadius, 0, Math.PI * 2, false);
+      context.clip();
+
+      context.drawImage(canvas,
+              originalRectangle.x, originalRectangle.y,
+              originalRectangle.width, originalRectangle.height,
+              scaleGlassRectangle.x, scaleGlassRectangle.y,
+              scaleGlassRectangle.width, scaleGlassRectangle.height
+      )
+      context.restore();
+
+      context.beginPath();
+      var gradient = context.createRadialGradient(
+              centerPoint.x, centerPoint.y, originalRadius - 5,
+              centerPoint.x, centerPoint.y, originalRadius);
+      gradient.addColorStop(0, 'rgba(0,0,0,0.2)');
+      gradient.addColorStop(0.80, 'silver');
+      gradient.addColorStop(0.90, 'silver');
+      gradient.addColorStop(1.0, 'rgba(150,150,150,0.9)');
+
+      context.strokeStyle = gradient;
+      context.lineWidth = 5;
+      context.arc(centerPoint.x, centerPoint.y, originalRadius, 0, Math.PI * 2, false);
+      context.stroke();
+    }
+
+    function draw() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackGround();
+      calOriginalRectangle(centerPoint);
+      drawMagnifyingGlass();
+    }
+
+
+    function addListener() {
+      canvas.onmousemove = function (e) {
+        centerPoint = windowToCanvas(e.clientX, e.clientY);
+        draw();
+      }
+    }
+    function windowToCanvas(x, y) {
+      var bbox = canvas.getBoundingClientRect();
+      var bbox = canvas.getBoundingClientRect();
+      return { x: x - bbox.left, y: y - bbox.top }
+    }
+  }
+</script>
+
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制文字</title>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    //(填充的字符串，横坐标，纵坐标)
+    ctx.fillText('Hello world', 50, 50);
+  </script>
+</body>
+</html>

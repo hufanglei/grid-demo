@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图像处理</title>
+    <!--    ctx.drawImage(image, dx, dy);-->
+    <!--    ctx.drawImage(image, dx, dy, dWidth, dHeight);-->
+    <!--    ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);-->
+
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas"></canvas>
+
+<script>
+    // var canvas = document.getElementById('myCanvas');
+    // var ctx = canvas.getContext('2d');
+    // var img = new Image();
+    // img.src = 'https://img-home.csdnimg.cn/images/20220921102650.png';
+    // img.onload = function () {
+    //     ctx.drawImage(img, 0, 0);
+    // };
+
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    var image = new Image(60, 45);
+    image.onload = drawImageActualSize;
+    image.src = '../images/2.png';
+
+    function drawImageActualSize() {
+        canvas.width = this.naturalWidth;
+        canvas.height = this.naturalHeight;
+        ctx.drawImage(this, 0, 0, this.naturalWidth, this.naturalHeight);
+    }
+</script>
+</body>
+</html>

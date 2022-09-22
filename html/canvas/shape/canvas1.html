@@ -1,0 +1,39 @@
+<html>
+<head>
+    <style>
+        body {
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="450" height="450"></canvas>
+<script type="application/javascript">
+    //<canvas> 只支持两种形式的图形绘制：矩形和路径（由一系列点连成的线段）
+    // 绘制一个填充的矩形
+    // fillRect(x, y, width, height)
+    //绘制一个矩形的边框
+    // strokeRect(x, y, width, height)
+    // 绘制一个矩形的边框
+    // 清除指定矩形区域，让清除部分完全透明。
+
+    // clearRect(x, y, width, height)
+    var canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+
+        ctx.fillStyle = "rgb(200,0,0)";
+        // 绘制一个填充的矩形。
+        ctx.fillRect(10, 10, 55, 50);
+
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        // 绘制一个矩形的边框
+        ctx.strokeRect(130, 130, 155, 150);
+        //绘制一个空白的矩形
+        ctx.fillStyle = 'red';
+        ctx.clearRect(45, 45, 60, 60);
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="item-img">
+    <canvas id="myCanvas" width="1280" height="650">
+
+    </canvas>
+</div>
+<!--原文链接：https://blog.csdn.net/weixin_43994675/article/details/119763634-->
+</body>
+<!--推荐2个网站:https://www.bookstack.cn/read/webapi-tutorial/spilt.5.docs-websocket.md-->
+<!--https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Using_images-->
+
+<script>
+    var dtcoord = [{x1:0,y1:0, w:100, h:100, txt:"抽烟", conf:"0.38"}];
+    var gtcoord = [{x1:20,y1:20, w:100, h:100, txt:"未带安全帽", conf:"0.95"}];
+    queryCanvasInfo();
+
+    //获取canvas节点
+    function queryCanvasInfo() {
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext('2d');
+        //定义图片
+        var img = new Image();
+        createCanvasImg(c, ctx, img, "../images/2.png");
+    }
+
+    //创建图片画布
+    function createCanvasImg(c, ctx, img, imgURL) {
+        img.src = imgURL;
+        img.onload = () => {
+            //图片加载时
+            ctx.clearRect(0, 0, c.width, c.height); //清空这个范围的画布
+            let a = img.width / img.height; //计算原始图片的宽高比例
+            console.log(img.width, img.height, 999);
+            if (img.width > img.height) {
+                //当图片宽度大于高度则写死宽度按高度调整比例
+                maxW = c.width; //最大宽度要等于画布的宽度
+                maxH = maxW / a;
+            } else {
+                //相反
+                (maxH = c.height), (maxW = maxH * a);
+            }
+            times = img.width / maxW; //计算原图与canvas的比例
+            canvasInfo(maxW, maxH,img,ctx); //重新绘制图片
+        };
+    }
+
+    //绘制图片
+    function canvasInfo(maxW, maxH,img,ctx) {
+        let w = maxW, //计算缩放的宽度
+            h = maxH; //计算缩放的高度
+        ctx.drawImage(
+            img, //图片实例
+            0,
+            0, //x轴y轴的边距
+            w,
+            h //图片的宽高
+        );
+        canvasRect(dtcoord, "dt",ctx);
+        canvasRect(gtcoord, "gt",ctx);
+    }
+    //标注框绘制
+    function canvasRect(list,txt,ctx) {
+        list.forEach((item) => {
+            if (!item) return;
+            let ary = item,
+                x = Number(ary[0]) / times,
+                y = Number(ary[1]) / times,
+                w = Number(ary[2]) / times,
+                h = Number(ary[3])/ times;
+            ctx.lineWidth = "1"; //框的粗细
+            if(txt=="gt"){
+                ctx.strokeStyle = "yellow"; //gt选中的标注框为红色
+            }else{
+                ctx.strokeStyle = "red"; //dt选中的标注框为红色
+            }
+            //开始绘制
+            ctx.strokeRect(x, y, w, h);
+        });
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="item-img">
+    <canvas id="myCanvas" width="1280" height="650">
+    </canvas>
+</div>
+<!--原文链接：https://blog.csdn.net/weixin_43994675/article/details/119763634-->
+</body>
+<!--推荐2个网站:https://www.bookstack.cn/read/webapi-tutorial/spilt.5.docs-websocket.md-->
+<!--https://developer.mozilla.org/zh-CN/docs/Web/API/Canvas_API/Tutorial/Using_images-->
+
+<script>
+    var dtcoord = [{x: 50, y: 50, w: 100, h: 100, txt: "抽烟", conf: "0.38"},{x: 100, y: 200, w: 120, h: 100, txt: "抽烟", conf: "0.95"}];
+    var gtcoord = [{x: 20, y: 20, w: 100, h: 100, txt: "未带安全帽", conf: "0.93"},{x: 260, y: 260, w: 100, h: 100, txt: "未带安全帽", conf: "0.92"}];
+    queryCanvasInfo();
+
+    //获取canvas节点
+    function queryCanvasInfo() {
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext('2d');
+        //定义图片
+        var img = new Image();
+        createCanvasImg(c, ctx, img, "2.png");
+    }
+
+    //创建图片画布
+    function createCanvasImg(c, ctx, img, imgURL) {
+        img.src = imgURL;
+        img.onload = () => {
+            //图片加载时
+            ctx.clearRect(0, 0, c.width, c.height); //清空这个范围的画布
+            let a = img.width / img.height; //计算原始图片的宽高比例
+            console.log(img.width, img.height, 999);
+            if (img.width > img.height) {
+                //当图片宽度大于高度则写死宽度按高度调整比例
+                maxW = c.width; //最大宽度要等于画布的宽度
+                maxH = maxW / a;
+            } else {
+                //相反
+                (maxH = c.height), (maxW = maxH * a);
+            }
+            times = img.width / maxW; //计算原图与canvas的比例
+            canvasInfo(maxW, maxH, img, ctx); //重新绘制图片
+        };
+    }
+
+    //绘制图片
+    function canvasInfo(maxW, maxH, img, ctx) {
+        let w = maxW, //计算缩放的宽度
+            h = maxH; //计算缩放的高度
+        ctx.drawImage(
+            img, //图片实例
+            0,
+            0, //x轴y轴的边距
+            w,
+            h //图片的宽高
+        );
+        canvasRect(dtcoord, "dt", ctx);
+        canvasRect(gtcoord, "gt", ctx);
+    }
+
+    //标注框绘制
+    function canvasRect(list, txt, ctx) {
+        list.forEach((item) => {
+            console.log(item)
+
+            if (!item) return;
+            x = Number(item.x) / times,
+                y = Number(item.y) / times,
+                w = Number(item.w) / times,
+                h = Number(item.h) / times;
+            ctx.lineWidth = "2"; //框的粗细
+            if (txt == "gt") {
+                ctx.strokeStyle = "yellow"; //gt选中的标注框为红色
+            } else {
+                ctx.strokeStyle = "red"; //dt选中的标注框为红色
+            }
+            console.log(2222)
+            //开始绘制
+            console.log(x, y, w, h)
+            ctx.strokeRect(x, y, w, h);
+
+            //文本
+            //CanvasRenderingContext2D.fillText(text, x, y [, maxWidth])
+            ctx.fillStyle = '#fff';
+            ctx.fillText(item.conf, (x + w/2) , y-2);
+
+            // ctx.beginPath();
+            // ctx.moveTo(x-, y);
+            // ctx.lineTo(x+w, y);
+            // ctx.lineTo(x+w, y+h);
+            // ctx.lineTo(x, y+h);
+            // ctx.fill()
+
+        });
+    }
+
+
+</script>
+</html>
