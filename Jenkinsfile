@@ -9,7 +9,7 @@ pipeline {
 
     stage('Build') {
       steps {
-        tool(name: 'gradle7.6', type: 'tool')
+        tool 'gradle7.6'
         sh 'echo "hello-world"'
       }
     }
