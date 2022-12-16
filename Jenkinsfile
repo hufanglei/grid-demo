@@ -7,6 +7,13 @@ pipeline {
       }
     }
 
+    stage('Build') {
+      steps {
+        tool(name: 'gradle7.6', type: 'tool')
+        sh 'echo "hello-world"'
+      }
+    }
+
   }
   environment {
     COMPLETED_MSG = 'Build Done!'
